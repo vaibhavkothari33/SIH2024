@@ -1,0 +1,268 @@
+
+  /* background: ; */
+  /* background: linear-gradient(135deg, #667eea, #764ba2);*/
+  /* background: linear-gradient(135deg, #89f7fe, #66a6ff);
+  background: linear-gradient(135deg, #ff758c, #ff7eb3);
+  background: linear-gradient(135deg, #fddb92, #d1fdff);
+  background: linear-gradient(135deg, #f38181, #fce38a); */
+ 
+
+body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  display: flex;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  /* background: linear-gradient(135deg, #ff758c, #ff7eb3, #f3a683, #f7d794); */
+  background: linear-gradient(135deg, #ff7e79, #ffc371, #ffeb3b, #8bc34a, #00bcd4, #3f51b5, #673ab7);
+  background-size: 400% 400%;
+  animation: gradientAnimation 5s ease infinite;
+  color: #333;
+  position: relative;
+  overflow-x: hidden;
+}
+
+@keyframes gradientAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Navigation Bar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #4a4a4a;
+}
+
+.menu a {
+  margin: 0 15px;
+  text-decoration: none;
+  color: #4a4a4a;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+.menu a:hover {
+  color: #667eea;
+}
+
+.sign-in-btn {
+  padding: 8px 20px;
+  background-color: #667eea;
+  color: #fff;
+  margin-right: 35px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.sign-in-btn:hover {
+  background-color: #4a4a4a;
+  transform: translateY(-3px);
+}
+
+/* Main Container */
+.main-container {
+  margin-top: 70px; /* To offset the fixed navbar */
+  text-align: center;
+  padding: 30px;
+}
+
+/* Hero Section */
+.hero-section {
+  /* padding: 1px 0; */
+  margin-bottom: 30px;
+}
+
+.hero-title {
+  font-size: 5rem; /* Slightly smaller for better fit on mobile */
+  color: white;
+  margin-bottom: 10px;
+  animation: fadeIn 1.5s ease-out;
+}
+
+.hero-subtitle {
+  font-size: 1.1rem;
+  color: white;
+  margin-bottom: 20px;
+  animation: fadeIn 2s ease-out;
+}
+
+/* Get Started Button */
+.get-started {
+  background-color: #764ba2;
+  color: #ffffff;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 25px;
+  font-size: 1rem;
+  cursor: pointer;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.get-started:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Container for image and quote */
+.hero-quote-image-container {
+  display: flex;
+  align-items: center; /* Center the items vertically */
+  justify-content: space-between; /* Space between the quote and image */
+  margin: 20px 0;
+  padding: 20px;
+  background-color: rgba(
+    255,
+    255,
+    255,
+    0.8
+  ); /* Light background for contrast */
+  border-radius: 20px; /* Rounded corners */
+  animation: fadeIn 2s ease-out; /* Fade-in animation */
+}
+
+/* Quote Styling */
+.hero-quote {
+  /* flex: 1; Take available space */
+  font-size: 1.5rem;
+  font-style: italic;
+  color: #4a4a4a;
+  margin-right: 20px;
+  padding: 100px;
+  line-height: 1.6;
+  font-family: "Georgia", serif; /* Serif font for a classic look */
+}
+
+/* Image Styling */
+.hero-image-container {
+  flex: 1; /* Take available space */
+  display: flex;
+  justify-content: center; /* Center image horizontally */
+  align-items: center; /* Center image vertically */
+}
+
+.hero-image {
+  max-width: 100%;
+  height: auto; /* Maintain the original aspect ratio */
+  border-radius: 20px; /* Rounded edges */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Hover effect */
+}
+
+.hero-image:hover {
+  transform: scale(1.05); /* Slight zoom effect */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Shadow on hover */
+}
+
+/* Features Section */
+.features {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 20px;
+  padding: 10px; /* Reduced padding for smaller screens */
+}
+
+.feature-item {
+  background-color: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  flex: 1 1 calc(33% - 40px); /* Flexible width */
+  margin: 10px;
+  max-width: 300px;
+  min-width: 250px;
+  animation: slideUp 1.2s ease-out;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.feature-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.feature-item h2 {
+  color: #667eea;
+  font-size: 1.4rem;
+  margin-bottom: 10px;
+}
+
+.feature-item p {
+  color: #7f8c8d;
+  font-size: 1rem;
+  margin: 0;
+  line-height: 1.5; /* Improved readability */
+}
+
+/* Animations */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  0% {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+  .features {
+    flex-direction: column; /* Stack items vertically on smaller screens */
+    align-items: center;
+  }
+
+  .feature-item {
+    flex: 1 1 100%; /* Full width on smaller screens */
+    max-width: 90%;
+    margin: 10px 0; /* Reduce margin for smaller screens */
+  }
+
+  .hero-title {
+    font-size: 2rem;
+  }
+
+  .hero-subtitle {
+    font-size: 4rem;
+  }
+
+  .hero-quote-image-container {
+    flex-direction: column; /* Stack quote and image vertically on smaller screens */
+    text-align: center;
+  }
+
+  .hero-quote {
+    margin-bottom: 20px; /* Add margin to the bottom for spacing */
+  }
+}

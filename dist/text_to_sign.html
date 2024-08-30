@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text/Voice to Sign Video</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        #videoPlayer {
+            width: 640px;
+            height: 360px;
+            border: 2px solid #333;
+            background-color: #000;
+            margin-bottom: 20px;
+        }
+
+        #controlPanel {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #textInput {
+            width: 300px;
+            height: 40px;
+            font-size: 18px;
+            padding: 5px;
+            margin-bottom: 10px;
+            border: 2px solid #333;
+            border-radius: 5px;
+        }
+
+        #micButton {
+            width: 50px;
+            height: 50px;
+            background-color: #ff4757;
+            border-radius: 50%;
+            border: none;
+            color: white;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="videoPlayer">
+        <video id="signVideo" width="640" height="360" controls>
+            <source id="videoSource" src="" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+
+    <div id="controlPanel">
+        <input type="text" id="textInput" placeholder="Type or speak a sentence...">
+        <button id="micButton">🎤</button>
+    </div>
+
+    <script>
+        const videoPlayer = document.getElementById('signVideo');
+        const videoSource = document.getElementById('videoSource');
+        const textInput = document.getElementById('textInput');
+        const micButton = document.getElementById('micButton');
+
+        // WebSocket connection setup with token authentication
+        const token = 'your-token-here';  // Replace with your actual token
+        const ws = new WebSocket(`ws://localhost:8080?token=${token}`);
+
+        ws.onopen = () => {
+            console.log('WebSocket connection established');
+        };
+
+        ws.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            if (data.videoUrl) {
+                playSignVideo(data.videoUrl);
+            }
+        };
+
+        ws.onerror = (error) => {
+            console.error('WebSocket error: ', error);
+        };
+
+        ws.onclose = () => {
+            console.log('WebSocket connection closed');
+        };
+
+        // Function to play the video received from the backend
+        function playSignVideo(videoUrl) {
+            videoSource.src = videoUrl;
+            videoPlayer.load();
+            videoPlayer.play();
+        }
+
+        // Event listener for the text input field
+        textInput.addEventListener('input', (event) => {
+            const text = event.target.value.trim();
+            if (text && ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({ text: text }));
+            }
+        });
+
+        // Speech recognition setup
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        recognition.lang = 'en-US';
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        micButton.addEventListener('click', () => {
+            recognition.start();
+            micButton.style.backgroundColor = '#2ed573';
+        });
+
+        recognition.onresult = (event) => {
+            const speechResult = event.results[0][0].transcript;
+            textInput.value = speechResult;
+            if (ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({ text: speechResult }));
+            }
+            micButton.style.backgroundColor = '#ff4757';
+        };
+
+        recognition.onspeechend = () => {
+            recognition.stop();
+        };
+
+        recognition.onerror = (event) => {
+            console.error('Speech recognition error detected: ' + event.error);
+            micButton.style.backgroundColor = '#ff4757';
+        };
+    </script>
+</body>
+</html>

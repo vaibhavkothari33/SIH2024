@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hand Sign to Text</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #27293D;
+        }
+
+        #cameraFeed {
+            width: 640px;
+            height: 480px;
+            border: 2px solid #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+            background-color: #fff;
+            border: 4px solid black;
+            transform: scaleX(-1); /* Mirror the camera feed */
+        }
+
+        #outputBox {
+            width: 640px;
+            height: 100px;
+            border: 2px solid #333;
+            padding: 10px;
+            background-color: #fff;
+            font-size: 20px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        #outputBox input {
+            width: 100%;
+            height: 100%;
+            border: none;
+            outline: none;
+            font-size: 20px;
+            text-align: center;
+            background-color: transparent;
+        }
+
+        canvas {
+            display: none; /* Hide the canvas */
+        }
+    </style>
+</head>
+
+<body>
+    <div id="cameraFeed"></div>
+    <div id="outputBox"><input type="text" id="outputText" placeholder="Output will be displayed here..."></div>
+    <canvas id="canvas" width="640" height="480"></canvas>
+
+    <script>
+        // Access camera and display feed
+        const video = document.createElement('video');
+        video.width = 640;
+        video.height = 480;
+        document.getElementById('cameraFeed').appendChild(video);
+
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                video.srcObject = stream;
+                video.play();
+            })
+            .catch(err => {
+                console.error('Error accessing camera: ', err);
+            });
+
+        // Set up canvas
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        // Set up WebSocket
+        const ws = new WebSocket('ws://localhost:8080');
+
+        ws.onopen = () => {
+            console.log('WebSocket connection established');
+        };
+
+        ws.onmessage = (event) => {
+            const outputText = event.data; // Assume server sends the recognized text
+            displayOutput(outputText);
+            speakOutput(outputText);
+        };
+
+        // Function to capture frame from video and send to WebSocket
+        function captureFrame() {
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const frameData = canvas.toDataURL('image/jpeg');
+            ws.send(frameData);
+        }
+
+        // Capture and send a frame every second
+        setInterval(captureFrame, 1000);
+
+        // Function to display output text in the output box
+        function displayOutput(text) {
+            const outputBox = document.getElementById('outputText');
+            outputBox.value = text;
+        }
+
+        // Function to convert text to speech using Google Text-to-Speech API
+        function speakOutput(text) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            speechSynthesis.speak(utterance);
+        }
+
+        // Handle real-time text-to-speech when typing full words
+        let typingTimer;
+        const typingInterval = 500; // 0.5 seconds
+
+        document.getElementById('outputText').addEventListener('input', (event) => {
+            clearTimeout(typingTimer);
+            typingTimer = setTimeout(() => {
+                const text = event.target.value.trim();
+                if (text) {
+                    speakOutput(text.split(" ").pop()); // Speak the last word typed
+                }
+            }, typingInterval);
+        });
+
+        document.getElementById('outputText').addEventListener('keydown', (event) => {
+            if (event.key === " ") {
+                const text = event.target.value.trim();
+                speakOutput(text.split(" ").pop()); // Speak the last word typed
+            }
+        });
+    </script>
+</body>
+
+</html>
